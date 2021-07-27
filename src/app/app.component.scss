@@ -1,0 +1,17 @@
+p-terminal {
+  padding: 2em;
+  font-family: monospace;
+  font-size: 200%;
+}
+
+::ng-deep,
+.p-terminal-input {
+  flex: 1 1 auto;
+  border: 0;
+  background-color: transparent;
+  color: inherit;
+  padding: 0px;
+  outline: 0 none;
+  font-family: monospace;
+  font-size: 200%;
+}
