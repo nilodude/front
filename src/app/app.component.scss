@@ -1,7 +1,9 @@
 p-terminal {
-  padding: 2em;
+  padding: 5em;
   font-family: monospace;
   font-size: 200%;
+  height: 38rem;
+  overflow: auto;
 }
 
 ::ng-deep,
