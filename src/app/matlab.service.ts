@@ -22,6 +22,10 @@ export class MatlabService {
     return this.http.get<MatlabResponse>(this.apiUrl + '/sessions');
   }
 
+  newWorkspace(): Observable<MatlabResponse> {
+    return this.http.get<MatlabResponse>(this.apiUrl + '/newSession');
+  }
+
   runCommand(sid: number, commands: string): Observable<MatlabResponse> {
     return this.http.get<MatlabResponse>(
       this.apiUrl + '/run?sid=' + sid + '&commands=' + encodeURI(commands)
