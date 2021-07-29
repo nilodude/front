@@ -23,6 +23,7 @@ export class AppComponent {
   element: HTMLElement;
   msgs: Message[];
   menuItemSessions: MenuItem[];
+  displayTerminal: boolean;
 
   constructor(
     private terminalService: TerminalService,
@@ -30,55 +31,56 @@ export class AppComponent {
     private host: ElementRef
   ) {
     this.terminalService.commandHandler.subscribe((command) => {
-      if (this.session.sid) {
-        this.matlabService.runCommand(this.session.sid, command).subscribe(
-          (result) => {
-            this.matlabResponse = result as MatlabResponse;
-            this.terminalService.sendResponse(this.matlabResponse.result);
+      this.matlabService.runCommand(this.session.sid, command).subscribe(
+        (result) => {
+          this.matlabResponse = result as MatlabResponse;
+          this.terminalService.sendResponse(this.matlabResponse.result);
 
-            this.host.nativeElement.focus();
-            console.log('clicked?');
-          },
-          (error) => {
-            console.log(error);
-          }
-        );
-      } else {
-        this.terminalService.sendResponse('No Matlab workspaces running!');
-      }
+          this.host.nativeElement.focus();
+          console.log('clicked?');
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
     });
   }
 
   ngOnInit() {
+    this.displayTerminal = false;
+    this.msgs = [];
     this.element = document.getElementById('termi') as HTMLElement;
     this.getSessions();
   }
 
-  getMenuItems(): MenuItem[]{
+  getMenuItems(): MenuItem[] {
     this.menuItems = [];
     this.menuItems = [
       {
-        label: 'Start Matlab',
-        icon: 'pi pi-fw pi-play',
-        items: [
-          {
-            label: 'New Workspace',
-            icon: 'pi pi-fw pi-plus',
-            command: () => this.newWorkspace(),
-          },
-          {
-            label: 'Join Workspace',
-            icon: 'pi pi-fw pi-folder-open',
-            items: this.menuItemSessions,
-          },
-        ],
+        label: 'New Workspace',
+        icon: 'pi pi-fw pi-plus',
+        command: () => this.newWorkspace(),
       },
       {
-        label: 'Stop/Restart Matlab',
-        icon: 'pi pi-fw pi-pencil',
+        label: 'Join Workspace',
+        icon: 'pi pi-fw pi-sign-in',
+        items: this.menuItemSessions,
+      },
+
+      {
+        label: 'Stop/Restart Workspace',
+        icon: 'pi pi-fw pi-replay',
         items: [
-          { label: 'Delete', icon: 'pi pi-fw pi-trash', command:()=>this.stopSession(this.session) },
-          { label: 'Refresh', icon: 'pi pi-fw pi-refresh', command:()=>this.restartSession(this.session) },
+          {
+            label: 'Delete',
+            icon: 'pi pi-fw pi-trash',
+            command: () => this.stopSession(this.session),
+          },
+          {
+            label: 'Restart',
+            icon: 'pi pi-fw pi-refresh',
+            command: () => this.restartSession(this.session),
+          },
         ],
       },
     ];
@@ -98,17 +100,24 @@ export class AppComponent {
       summary: '',
       detail: 'Starting New Workspace...',
     });
-
+    this.displayTerminal = false;
     this.matlabService.newWorkspace().subscribe(
       (result) => {
+        this.session = new MatlabSession();
         this.session = result.session as MatlabSession;
+        sessionStorage.setItem('currentSession', JSON.stringify(this.session));
         this.msgs = [];
-        this.msgs.push({ severity: 'success', summary: '',detail: result.result,});
+        this.msgs.push({
+          severity: 'success',
+          summary: '',
+          detail: result.result,
+        });
+        this.displayTerminal = true;
         this.getSessions();
       },
       (error) => {
         console.log(error);
-        this.msgs.push({severity: 'error',summary: '',detail: error, });
+        this.msgs.push({ severity: 'error', summary: '', detail: error });
       }
     );
   }
@@ -127,7 +136,7 @@ export class AppComponent {
             detail: 'No Matlab workspaces running!',
           });
         } else {
-         // this.msgs = [];
+          // this.msgs = [];
           runningSessions.forEach((session) => {
             this.msgs.push({
               severity: 'info',
@@ -146,7 +155,6 @@ export class AppComponent {
         console.log(error);
       }
     );
-    
   }
 
   joinWorkspace(session: MatlabSession) {
@@ -157,34 +165,60 @@ export class AppComponent {
       summary: '',
       detail: 'Joined Workspace ' + session.sid,
     });
+    this.displayTerminal = true;
   }
 
-  stopSession(session: MatlabSession){
-    this.matlabService.stopSession(session.sid,false).subscribe(
+  stopSession(session: MatlabSession) {
+    this.displayTerminal = false;
+    this.msgs = [];
+    this.msgs.push({
+      severity: 'success',
+      summary: '',
+      detail: 'Stopping Workspace...' + session.sid,
+    });
+    this.matlabService.stopSession(session.sid, false).subscribe(
       (result) => {
         this.msgs = [];
-        this.msgs.push({ severity: 'success', summary: '',detail: result.result});
+        this.msgs.push({
+          severity: 'success',
+          summary: '',
+          detail: result.result,
+        });
         this.session = new MatlabSession();
         this.getSessions();
       },
       (error) => {
         console.log(error);
-        this.msgs.push({severity: 'error',summary: '',detail: error, });
+        this.msgs.push({ severity: 'error', summary: '', detail: error });
       }
     );
   }
 
-  restartSession(session: MatlabSession){
+  restartSession(session: MatlabSession) {
+    this.displayTerminal = false;
+    this.msgs = [];
+    this.msgs.push({
+      severity: 'success',
+      summary: '',
+      detail: 'Restarting Workspace...' + session.sid,
+    });
+
     this.matlabService.stopSession(session.sid, true).subscribe(
       (result) => {
         this.session = result.session as MatlabSession;
         this.msgs = [];
-        this.msgs.push({ severity: 'success', summary: '',detail: result.result});
+        this.msgs.push({
+          severity: 'success',
+          summary: '',
+          detail: result.result,
+        });
+
         this.getSessions();
+        this.displayTerminal = true;
       },
       (error) => {
         console.log(error);
-        this.msgs.push({severity: 'error',summary: '',detail: error.error, });
+        this.msgs.push({ severity: 'error', summary: '', detail: error.error });
       }
     );
   }
