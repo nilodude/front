@@ -31,4 +31,13 @@ export class MatlabService {
       this.apiUrl + '/run?sid=' + sid + '&commands=' + encodeURI(commands)
     );
   }
+
+  stopSession(
+    sid: number,
+    restart: boolean = false
+  ): Observable<MatlabResponse> {
+    return this.http.get<MatlabResponse>(
+      this.apiUrl + '/stopMatlab?sid=' + sid + '&restart=' + restart
+    );
+  }
 }

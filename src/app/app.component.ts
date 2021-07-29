@@ -50,9 +50,12 @@ export class AppComponent {
   }
 
   ngOnInit() {
-    this.getSessions();
-
     this.element = document.getElementById('termi') as HTMLElement;
+    this.getSessions();
+  }
+
+  getMenuItems(): MenuItem[]{
+    this.menuItems = [];
     this.menuItems = [
       {
         label: 'Start Matlab',
@@ -71,14 +74,15 @@ export class AppComponent {
         ],
       },
       {
-        label: 'Edit',
+        label: 'Stop/Restart Matlab',
         icon: 'pi pi-fw pi-pencil',
         items: [
-          { label: 'Delete', icon: 'pi pi-fw pi-trash' },
-          { label: 'Refresh', icon: 'pi pi-fw pi-refresh' },
+          { label: 'Delete', icon: 'pi pi-fw pi-trash', command:()=>this.stopSession(this.session) },
+          { label: 'Refresh', icon: 'pi pi-fw pi-refresh', command:()=>this.restartSession(this.session) },
         ],
       },
     ];
+    return this.menuItems;
   }
 
   ngOnDestroy() {
@@ -92,26 +96,19 @@ export class AppComponent {
     this.msgs.push({
       severity: 'warn',
       summary: '',
-      detail: 'Starting Workspace...',
+      detail: 'Starting New Workspace...',
     });
 
     this.matlabService.newWorkspace().subscribe(
       (result) => {
         this.session = result.session as MatlabSession;
         this.msgs = [];
-        this.msgs.push({
-          severity: 'success',
-          summary: '',
-          detail: result.result,
-        });
+        this.msgs.push({ severity: 'success', summary: '',detail: result.result,});
+        this.getSessions();
       },
       (error) => {
         console.log(error);
-        this.msgs.push({
-          severity: 'error',
-          summary: '',
-          detail: error,
-        });
+        this.msgs.push({severity: 'error',summary: '',detail: error, });
       }
     );
   }
@@ -122,7 +119,7 @@ export class AppComponent {
       (result) => {
         this.sessions = result.sessions as MatlabSession[];
         const runningSessions = this.sessions.filter((each) => each.pid);
-        if (!runningSessions) {
+        if (runningSessions.length === 0) {
           this.msgs = [];
           this.msgs.push({
             severity: 'info',
@@ -130,7 +127,7 @@ export class AppComponent {
             detail: 'No Matlab workspaces running!',
           });
         } else {
-          this.msgs = [];
+         // this.msgs = [];
           runningSessions.forEach((session) => {
             this.msgs.push({
               severity: 'info',
@@ -143,11 +140,13 @@ export class AppComponent {
             });
           });
         }
+        this.getMenuItems();
       },
       (error) => {
         console.log(error);
       }
     );
+    
   }
 
   joinWorkspace(session: MatlabSession) {
@@ -158,5 +157,35 @@ export class AppComponent {
       summary: '',
       detail: 'Joined Workspace ' + session.sid,
     });
+  }
+
+  stopSession(session: MatlabSession){
+    this.matlabService.stopSession(session.sid,false).subscribe(
+      (result) => {
+        this.msgs = [];
+        this.msgs.push({ severity: 'success', summary: '',detail: result.result});
+        this.session = new MatlabSession();
+        this.getSessions();
+      },
+      (error) => {
+        console.log(error);
+        this.msgs.push({severity: 'error',summary: '',detail: error, });
+      }
+    );
+  }
+
+  restartSession(session: MatlabSession){
+    this.matlabService.stopSession(session.sid, true).subscribe(
+      (result) => {
+        this.session = result.session as MatlabSession;
+        this.msgs = [];
+        this.msgs.push({ severity: 'success', summary: '',detail: result.result});
+        this.getSessions();
+      },
+      (error) => {
+        console.log(error);
+        this.msgs.push({severity: 'error',summary: '',detail: error.error, });
+      }
+    );
   }
 }
