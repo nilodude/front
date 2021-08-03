@@ -2,4 +2,10 @@
 <p-menubar [model]="menuItems"> Matlab Online Workspace </p-menubar>
 <p-messages [(value)]="msgs"></p-messages>
 <div id="termi"><p-terminal *ngIf="this.displayTerminal" welcomeMessage="Matlab Online Workspace #{{this.session.sid}}" prompt=">>" autofocus ></p-terminal></div>
+
+<p-carousel *ngIf="this.displayFigures" [value]="figures">
+    <ng-template let-figure pTemplate="item">
+        <div><img src="{{figure.base64}}"><button onClick="closeFigure(figure.id)" >X</button></div>
+    </ng-template>
+</p-carousel>
 </div>

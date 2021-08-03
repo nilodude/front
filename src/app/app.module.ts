@@ -8,6 +8,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { MenubarModule } from 'primeng/menubar';
 import { MessagesModule } from 'primeng/messages';
 import { MessageModule } from 'primeng/message';
+import { CarouselModule } from 'primeng/carousel';
 
 @NgModule({
   declarations: [AppComponent],
@@ -19,6 +20,7 @@ import { MessageModule } from 'primeng/message';
     MenubarModule,
     MessagesModule,
     MessageModule,
+    CarouselModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

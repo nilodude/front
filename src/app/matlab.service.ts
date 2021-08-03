@@ -40,4 +40,8 @@ export class MatlabService {
       this.apiUrl + '/stopMatlab?sid=' + sid + '&restart=' + restart
     );
   }
+
+  getFigures(sid: number) {
+    return this.runCommand(sid, 'figures');
+  }
 }

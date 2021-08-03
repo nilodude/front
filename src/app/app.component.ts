@@ -2,7 +2,7 @@ import { Component, ElementRef } from '@angular/core';
 import { TerminalService } from 'primeng/terminal';
 import { Subscription } from 'rxjs';
 import { MatlabService } from './matlab.service';
-import { MatlabResponse, MatlabSession } from './models';
+import { Figure, MatlabResponse, MatlabSession } from './models';
 import { MenubarModule } from 'primeng/menubar';
 import { MenuItem, Message } from 'primeng/api';
 
@@ -18,12 +18,13 @@ export class AppComponent {
   session: MatlabSession = new MatlabSession();
   sessions: MatlabSession[];
   matlabResponse: MatlabResponse;
-  figures: string[];
   menuItems: MenuItem[];
   element: HTMLElement;
   msgs: Message[];
   menuItemSessions: MenuItem[];
   displayTerminal: boolean;
+  displayFigures: boolean;
+  figures: any[];
 
   constructor(
     private terminalService: TerminalService,
@@ -38,6 +39,7 @@ export class AppComponent {
 
           this.host.nativeElement.focus();
           console.log('clicked?');
+          this.plotFigures();
         },
         (error) => {
           console.log(error);
@@ -51,6 +53,7 @@ export class AppComponent {
     this.msgs = [];
     this.element = document.getElementById('termi') as HTMLElement;
     this.getSessions();
+    this.figures = [];
   }
 
   getMenuItems(): MenuItem[] {
@@ -166,6 +169,15 @@ export class AppComponent {
       detail: 'Joined Workspace ' + session.sid,
     });
     this.displayTerminal = true;
+    this.matlabService.getFigures(session.sid).subscribe(
+      (result) => {
+        this.matlabResponse = result as MatlabResponse;
+        this.plotFigures();
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
   }
 
   stopSession(session: MatlabSession) {
@@ -221,5 +233,22 @@ export class AppComponent {
         this.msgs.push({ severity: 'error', summary: '', detail: error.error });
       }
     );
+  }
+
+  plotFigures(): void {
+    if (this.matlabResponse.figures.length > 0) {
+      this.displayFigures = true;
+      this.matlabResponse.figures.forEach((figure) => {
+        const fig = figure as Figure;
+        this.figures.push({
+          id: decodeURIComponent(fig.id.toString()),
+          src: 'data:image/png;base64,' + fig.base64,
+        });
+      });
+    }
+  }
+
+  closeFigure(id: number): void {
+    this.figures = this.figures.filter((figure) => figure.id !== id);
   }
 }
