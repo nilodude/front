@@ -61,18 +61,18 @@ export class AppComponent {
     this.menuItems = [];
     this.menuItems = [
       {
-        label: 'New Workspace',
+        label: 'New',
         icon: 'pi pi-fw pi-plus',
         command: () => this.newWorkspace(),
       },
       {
-        label: 'Join Workspace',
+        label: 'Join',
         icon: 'pi pi-fw pi-sign-in',
         items: this.menuItemSessions,
       },
 
       {
-        label: 'Stop/Restart Workspace',
+        label: 'Stop/Restart',
         icon: 'pi pi-fw pi-replay',
         items: [
           {
@@ -237,9 +237,9 @@ export class AppComponent {
   }
 
   plotFigures(): void {
+    this.figures=[];
     if (this.matlabResponse.figures.length > 0) {
       this.displayFigures = true;
-      this.figures=[];
       this.matlabResponse.figures.forEach((figure) => {
         const fig = figure as Figure;
         this.figures.push({
