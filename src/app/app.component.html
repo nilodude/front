@@ -5,7 +5,9 @@
 
 <p-carousel *ngIf="this.displayFigures" [value]="figures">
     <ng-template let-figure pTemplate="item">
-        <div><img src="{{figure.base64}}"><button onClick="closeFigure(figure.id)" >X</button></div>
+        <div><img src="{{figure.src}}">
+        <!--<button onClick="closeFigure(figure.id)" >X</button>-->
+        </div>
     </ng-template>
 </p-carousel>
 </div>

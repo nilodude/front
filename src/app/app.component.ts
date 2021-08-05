@@ -34,6 +34,7 @@ export class AppComponent {
     this.terminalService.commandHandler.subscribe((command) => {
       this.matlabService.runCommand(this.session.sid, command).subscribe(
         (result) => {
+          this.matlabResponse = new MatlabResponse();
           this.matlabResponse = result as MatlabResponse;
           this.terminalService.sendResponse(this.matlabResponse.result);
 
@@ -238,10 +239,10 @@ export class AppComponent {
   plotFigures(): void {
     if (this.matlabResponse.figures.length > 0) {
       this.displayFigures = true;
+      this.figures=[];
       this.matlabResponse.figures.forEach((figure) => {
         const fig = figure as Figure;
         this.figures.push({
-          id: decodeURIComponent(fig.id.toString()),
           src: 'data:image/png;base64,' + fig.base64,
         });
       });
