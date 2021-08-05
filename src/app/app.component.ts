@@ -25,6 +25,7 @@ export class AppComponent {
   displayTerminal: boolean;
   displayFigures: boolean;
   figures: any[];
+  prompt: string;
 
   constructor(
     private terminalService: TerminalService,
@@ -32,12 +33,14 @@ export class AppComponent {
     private host: ElementRef
   ) {
     this.terminalService.commandHandler.subscribe((command) => {
+      this.prompt = "<<";
       this.matlabService.runCommand(this.session.sid, command).subscribe(
         (result) => {
           this.matlabResponse = new MatlabResponse();
           this.matlabResponse = result as MatlabResponse;
           this.terminalService.sendResponse(this.matlabResponse.result);
           this.plotFigures();
+          this.prompt = ">>";
         },
         (error) => {
           console.log(error);
@@ -52,6 +55,7 @@ export class AppComponent {
     this.element = document.getElementById('termi') as HTMLElement;
     this.getSessions();
     this.figures = [];
+    this.prompt = ">>";
   }
 
   getMenuItems(): MenuItem[] {

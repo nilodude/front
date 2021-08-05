@@ -1,19 +1,28 @@
-p-terminal {
-  padding: 5em;
+:host ::ng-deep .p-terminal {
   font-family: monospace;
-  font-size: 200%;
-  height: 38rem;
-  overflow: auto;
+  height: 22rem;
 }
 
-::ng-deep,
-.p-terminal-content {
-  flex: 1 1 auto;
-  border: 0;
-  background-color: transparent;
-  color: inherit;
-  padding: 0px;
-  outline: 0 none;
+:host ::ng-deep .p-terminal-content  {
   font-family: monospace;
-  font-size: 200%;
+  font-size: 100%;
+  padding: 10px 0px 0px 0px;
+}
+
+:host ::ng-deep .p-terminal-prompt  {
+  font-family: monospace;
+  font-size: 100%;
+  padding: 10px 10px 10px 0px;
+}
+
+:host ::ng-deep .p-terminal-response {
+  font-family: monospace;
+  font-size: 100%;
+  padding: 10px 10px;
+}
+
+:host ::ng-deep .p-terminal-input {
+  font-family: monospace;
+  font-size: 100%;
+  padding: 0px 10px;
 }
