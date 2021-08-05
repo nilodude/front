@@ -37,9 +37,6 @@ export class AppComponent {
           this.matlabResponse = new MatlabResponse();
           this.matlabResponse = result as MatlabResponse;
           this.terminalService.sendResponse(this.matlabResponse.result);
-
-          this.host.nativeElement.focus();
-          console.log('clicked?');
           this.plotFigures();
         },
         (error) => {

@@ -28,7 +28,7 @@ export class MatlabService {
 
   runCommand(sid: number, commands: string): Observable<MatlabResponse> {
     return this.http.get<MatlabResponse>(
-      this.apiUrl + '/run?sid=' + sid + '&commands=' + encodeURI(commands)
+      this.apiUrl + '/run?sid='+ sid + '&commands=' + encodeURIComponent(commands)
     );
   }
 
