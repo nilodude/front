@@ -39,6 +39,9 @@ export class AppComponent {
           this.matlabResponse = new MatlabResponse();
           this.matlabResponse = result as MatlabResponse;
           this.terminalService.sendResponse(this.matlabResponse.result);
+          if(command === 'clc'){
+            this.clearConsole();
+          } 
           this.plotFigures();
           this.prompt = ">>";
         },
@@ -99,13 +102,14 @@ export class AppComponent {
   }
 
   newWorkspace(): void {
+    this.displayFigures= false;
+    this.displayTerminal = false;
     this.msgs = [];
     this.msgs.push({
       severity: 'warn',
       summary: '',
       detail: 'Starting New Workspace...',
     });
-    this.displayTerminal = false;
     this.matlabService.newWorkspace().subscribe(
       (result) => {
         this.session = new MatlabSession();
@@ -163,6 +167,7 @@ export class AppComponent {
   }
 
   joinWorkspace(session: MatlabSession) {
+    this.displayFigures= false;
     this.session = session;
     this.msgs = [];
     this.msgs.push({
@@ -252,5 +257,19 @@ export class AppComponent {
 
   closeFigure(id: number): void {
     this.figures = this.figures.filter((figure) => figure.id !== id);
+    this.prompt = "<<";
+    this.matlabService.runCommand(this.session.sid, 'close '+id).subscribe(
+      (result) => {
+        this.plotFigures();
+        this.prompt = ">>";
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  clearConsole(): void{
+    document.getElementsByClassName('p-terminal-content')[0].innerHTML = "";
   }
 }

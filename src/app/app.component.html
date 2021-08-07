@@ -5,10 +5,10 @@
 
 </p-terminal></div>
 
-<p-carousel *ngIf="this.displayFigures" [value]="figures">
+<p-carousel *ngIf="this.displayFigures" [value]="figures" >
     <ng-template let-figure pTemplate="item">
         <div><img src="{{figure.src}}">
-        <!--<button onClick="closeFigure(figure.id)" >X</button>-->
+        <button (click)="closeFigure(figure.id)" >X</button>
         </div>
     </ng-template>
 </p-carousel>
