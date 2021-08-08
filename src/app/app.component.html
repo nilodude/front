@@ -5,7 +5,7 @@
 
 </p-terminal></div>
 
-<p-carousel *ngIf="this.displayFigures" [value]="figures" >
+<p-carousel *ngIf="this.displayFigures" [value]="figures"  [numVisible]="2" [numScroll]="1">
     <ng-template let-figure pTemplate="item">
         <div><img src="{{figure.src}}">
         <button (click)="closeFigure(figure.id)" >X</button>

@@ -104,7 +104,6 @@ export class AppComponent {
   newWorkspace(): void {
     this.displayFigures= false;
     this.displayTerminal = false;
-    this.msgs = [];
     this.msgs.push({
       severity: 'warn',
       summary: '',
@@ -189,6 +188,7 @@ export class AppComponent {
 
   stopSession(session: MatlabSession) {
     this.displayTerminal = false;
+    this.displayFigures = false;
     this.msgs = [];
     this.msgs.push({
       severity: 'success',
@@ -249,6 +249,7 @@ export class AppComponent {
       this.matlabResponse.figures.forEach((figure) => {
         const fig = figure as Figure;
         this.figures.push({
+          id: fig.id,
           src: 'data:image/png;base64,' + fig.base64,
         });
       });
@@ -257,6 +258,7 @@ export class AppComponent {
 
   closeFigure(id: number): void {
     this.figures = this.figures.filter((figure) => figure.id !== id);
+    this.matlabResponse.figures = this.matlabResponse.figures.filter((figure) => figure.id !== id);
     this.prompt = "<<";
     this.matlabService.runCommand(this.session.sid, 'close '+id).subscribe(
       (result) => {
