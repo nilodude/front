@@ -3,7 +3,6 @@ import { TerminalService } from 'primeng/terminal';
 import { Subscription } from 'rxjs';
 import { MatlabService } from './matlab.service';
 import { Figure, MatlabResponse, MatlabSession } from './models';
-import { MenubarModule } from 'primeng/menubar';
 import { MenuItem, Message } from 'primeng/api';
 
 @Component({
@@ -63,35 +62,37 @@ export class AppComponent {
 
   getMenuItems(): MenuItem[] {
     this.menuItems = [];
-    this.menuItems = [
-      {
-        label: 'New',
-        icon: 'pi pi-fw pi-plus',
-        command: () => this.newWorkspace(),
-      },
-      {
+    
+    this.menuItems.push( {
+      label: 'New',
+      icon: 'pi pi-fw pi-plus',
+      command: () => this.newWorkspace(),
+    });
+    if(this.menuItemSessions.length > 0){
+      this.menuItems.push({
         label: 'Join',
         icon: 'pi pi-fw pi-sign-in',
         items: this.menuItemSessions,
-      },
-
-      {
+      });
+    }
+    if(this.session.pid){
+      this.menuItems.push({
         label: 'Stop/Restart',
         icon: 'pi pi-fw pi-replay',
         items: [
           {
-            label: 'Delete',
+            label: 'Close',
             icon: 'pi pi-fw pi-trash',
-            command: () => this.stopSession(this.session),
+            command: () => this.closeWorkspace(this.session),
           },
           {
             label: 'Restart',
             icon: 'pi pi-fw pi-refresh',
-            command: () => this.restartSession(this.session),
+            command: () => this.restartWorkspace(this.session),
           },
-        ],
-      },
-    ];
+        ]
+      });
+    } 
     return this.menuItems;
   }
 
@@ -175,9 +176,11 @@ export class AppComponent {
       detail: 'Joined Workspace ' + session.sid,
     });
     this.displayTerminal = true;
+    this.clearConsole();
     this.matlabService.getFigures(session.sid).subscribe(
       (result) => {
         this.matlabResponse = result as MatlabResponse;
+        this.getMenuItems();
         this.plotFigures();
       },
       (error) => {
@@ -186,16 +189,16 @@ export class AppComponent {
     );
   }
 
-  stopSession(session: MatlabSession) {
+  closeWorkspace(session: MatlabSession) {
     this.displayTerminal = false;
     this.displayFigures = false;
     this.msgs = [];
     this.msgs.push({
       severity: 'success',
       summary: '',
-      detail: 'Stopping Workspace...' + session.sid,
+      detail: 'Closing Workspace...' + session.sid,
     });
-    this.matlabService.stopSession(session.sid, false).subscribe(
+    this.matlabService.stopMatlab(session.sid, false).subscribe(
       (result) => {
         this.msgs = [];
         this.msgs.push({
@@ -213,7 +216,7 @@ export class AppComponent {
     );
   }
 
-  restartSession(session: MatlabSession) {
+  restartWorkspace(session: MatlabSession) {
     this.displayTerminal = false;
     this.msgs = [];
     this.msgs.push({
@@ -222,7 +225,7 @@ export class AppComponent {
       detail: 'Restarting Workspace...' + session.sid,
     });
 
-    this.matlabService.stopSession(session.sid, true).subscribe(
+    this.matlabService.stopMatlab(session.sid, true).subscribe(
       (result) => {
         this.session = result.session as MatlabSession;
         this.msgs = [];
@@ -244,6 +247,7 @@ export class AppComponent {
 
   plotFigures(): void {
     this.figures=[];
+    this.displayFigures = false;
     if (this.matlabResponse.figures.length > 0) {
       this.displayFigures = true;
       this.matlabResponse.figures.forEach((figure) => {
@@ -272,6 +276,8 @@ export class AppComponent {
   }
 
   clearConsole(): void{
+    if(document.getElementsByClassName('p-terminal-content')[0]){
     document.getElementsByClassName('p-terminal-content')[0].innerHTML = "";
+    }
   }
 }

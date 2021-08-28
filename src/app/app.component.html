@@ -1,15 +1,28 @@
-<div> 
-<p-menubar [model]="menuItems"> Matlab Online Workspace </p-menubar>
-<p-messages [(value)]="msgs"></p-messages>
-<div id="termi"><p-terminal *ngIf="this.displayTerminal" welcomeMessage="Matlab Online Workspace #{{this.session.sid}}" prompt="{{this.prompt}}" autofocus >
-
-</p-terminal></div>
-
-<p-carousel *ngIf="this.displayFigures" [value]="figures"  [numVisible]="2" [numScroll]="1">
-    <ng-template let-figure pTemplate="item">
-        <div><img src="{{figure.src}}">
-        <button (click)="closeFigure(figure.id)" >X</button>
+  <p-menubar [model]="menuItems"> Matlab Online Workspace </p-menubar>
+  <p-messages [(value)]="msgs"></p-messages>
+<div class="grid">
+  <div class="col-6">
+    <p-terminal
+      *ngIf="this.displayTerminal"
+      welcomeMessage="Matlab Online Workspace #{{ this.session.sid }}"
+      prompt="{{ this.prompt }}"
+      autofocus
+    >
+    </p-terminal>
+  </div>
+  <div class="col-6">
+    <p-carousel
+      *ngIf="this.displayFigures"
+      [value]="figures"
+      [numVisible]="1"
+      [numScroll]="1"
+    >
+      <ng-template let-figure pTemplate="item">
+        <div>
+          <img src="{{ figure.src }}" />
+          <button (click)="closeFigure(figure.id)">X</button>
         </div>
-    </ng-template>
-</p-carousel>
+      </ng-template>
+    </p-carousel>
+  </div>
 </div>

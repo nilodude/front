@@ -32,10 +32,7 @@ export class MatlabService {
     );
   }
 
-  stopSession(
-    sid: number,
-    restart: boolean = false
-  ): Observable<MatlabResponse> {
+  stopMatlab(sid: number,restart: boolean = false): Observable<MatlabResponse> {
     return this.http.get<MatlabResponse>(
       this.apiUrl + '/stopMatlab?sid=' + sid + '&restart=' + restart
     );
