@@ -1,5 +1,5 @@
-  <p-menubar [model]="menuItems"> Matlab Online Workspace </p-menubar>
-  <p-messages [(value)]="msgs"></p-messages>
+<p-menubar [model]="menuItems"> Matlab Online Workspace </p-menubar>
+<p-messages [(value)]="msgs"></p-messages>
 <div class="grid">
   <div class="col-6">
     <p-terminal
@@ -13,13 +13,13 @@
   <div class="col-6">
     <p-carousel
       *ngIf="this.displayFigures"
-      [value]="figures"
+      [value]="matlabResponse.figures"
       [numVisible]="1"
       [numScroll]="1"
     >
       <ng-template let-figure pTemplate="item">
         <div>
-          <img src="{{ figure.src }}" />
+          <img src="data:image/png;base64,{{ figure.base64 }}" />
           <button (click)="closeFigure(figure.id)">X</button>
         </div>
       </ng-template>

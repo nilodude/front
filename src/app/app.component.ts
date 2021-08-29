@@ -1,4 +1,4 @@
-import { Component, ElementRef } from '@angular/core';
+import { Component } from '@angular/core';
 import { TerminalService } from 'primeng/terminal';
 import { Subscription } from 'rxjs';
 import { MatlabService } from './matlab.service';
@@ -23,13 +23,12 @@ export class AppComponent {
   menuItemSessions: MenuItem[];
   displayTerminal: boolean;
   displayFigures: boolean;
-  figures: any[];
+  figures: Figure[];
   prompt: string;
 
   constructor(
     private terminalService: TerminalService,
     private matlabService: MatlabService,
-    private host: ElementRef
   ) {
     this.terminalService.commandHandler.subscribe((command) => {
       this.prompt = "<<";
@@ -46,6 +45,12 @@ export class AppComponent {
         },
         (error) => {
           console.log(error);
+          this.msgs = [];
+          this.msgs.push({
+            severity: 'error',
+            summary: '',
+            detail: error,
+          });
         }
       );
     });
@@ -105,6 +110,7 @@ export class AppComponent {
   newWorkspace(): void {
     this.displayFigures= false;
     this.displayTerminal = false;
+    this.msgs = [];
     this.msgs.push({
       severity: 'warn',
       summary: '',
@@ -141,17 +147,10 @@ export class AppComponent {
           this.msgs = [];
           this.msgs.push({
             severity: 'info',
-            summary: '',
             detail: 'No Matlab workspaces running!',
           });
         } else {
-          // this.msgs = [];
           runningSessions.forEach((session) => {
-            this.msgs.push({
-              severity: 'info',
-              summary: '',
-              detail: 'Workspace ' + session.sid + ', PID = ' + session.pid,
-            });
             this.menuItemSessions.push({
               label: 'Workspace ' + session.sid + ', PID = ' + session.pid,
               command: () => this.joinWorkspace(session),
@@ -250,13 +249,6 @@ export class AppComponent {
     this.displayFigures = false;
     if (this.matlabResponse.figures.length > 0) {
       this.displayFigures = true;
-      this.matlabResponse.figures.forEach((figure) => {
-        const fig = figure as Figure;
-        this.figures.push({
-          id: fig.id,
-          src: 'data:image/png;base64,' + fig.base64,
-        });
-      });
     }
   }
 
