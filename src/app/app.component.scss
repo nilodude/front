@@ -27,3 +27,34 @@
   font-size: 100%;
   padding: 0px 10px;
 }
+
+:host ::ng-deep .p-carousel .p-carousel-indicators .p-carousel-indicator.p-highlight button {
+  background-color: #aac2d4;
+  border-color: transparent;
+}
+
+.p-button {
+  vertical-align: top;
+  position: relative;
+}
+
+.p-button.p-button-text:enabled:hover {
+  background: rgba(33, 150, 243, 0.04);
+  color: #5b99cc;
+  border-color: transparent;
+}
+.p-button.p-button-text {
+  background-color: transparent;
+  color: #aac2d4;
+  border-color: transparent;
+}
+:host ::ng-deep .p-menubar-root-list>.p-menuitem-active>p-menubarsub>.p-submenu-list {
+  display: block;
+  width: max-content;
+}
+
+.col-1 {
+  flex: 0 0 auto;
+  padding: 0;
+  width: 0.3333%;
+}

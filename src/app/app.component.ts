@@ -48,7 +48,6 @@ export class AppComponent {
           this.msgs = [];
           this.msgs.push({
             severity: 'error',
-            summary: '',
             detail: error,
           });
         }
@@ -113,7 +112,6 @@ export class AppComponent {
     this.msgs = [];
     this.msgs.push({
       severity: 'warn',
-      summary: '',
       detail: 'Starting New Workspace...',
     });
     this.matlabService.newWorkspace().subscribe(
@@ -124,7 +122,6 @@ export class AppComponent {
         this.msgs = [];
         this.msgs.push({
           severity: 'success',
-          summary: '',
           detail: result.result,
         });
         this.displayTerminal = true;
@@ -132,7 +129,7 @@ export class AppComponent {
       },
       (error) => {
         console.log(error);
-        this.msgs.push({ severity: 'error', summary: '', detail: error });
+        this.msgs.push({ severity: 'error', detail: error });
       }
     );
   }
@@ -152,7 +149,7 @@ export class AppComponent {
         } else {
           runningSessions.forEach((session) => {
             this.menuItemSessions.push({
-              label: 'Workspace ' + session.sid + ', PID = ' + session.pid,
+              label: 'Workspace ' + session.sid + ' (PID=' + session.pid+')',
               command: () => this.joinWorkspace(session),
             });
           });
@@ -166,20 +163,21 @@ export class AppComponent {
   }
 
   joinWorkspace(session: MatlabSession) {
+    this.displayTerminal = false;
     this.displayFigures= false;
     this.session = session;
     this.msgs = [];
     this.msgs.push({
       severity: 'success',
-      summary: '',
       detail: 'Joined Workspace ' + session.sid,
     });
-    this.displayTerminal = true;
+    
     this.clearConsole();
     this.matlabService.getFigures(session.sid).subscribe(
       (result) => {
         this.matlabResponse = result as MatlabResponse;
         this.getMenuItems();
+        this.displayTerminal = true;
         this.plotFigures();
       },
       (error) => {
@@ -194,7 +192,6 @@ export class AppComponent {
     this.msgs = [];
     this.msgs.push({
       severity: 'success',
-      summary: '',
       detail: 'Closing Workspace...' + session.sid,
     });
     this.matlabService.stopMatlab(session.sid, false).subscribe(
@@ -202,7 +199,6 @@ export class AppComponent {
         this.msgs = [];
         this.msgs.push({
           severity: 'success',
-          summary: '',
           detail: result.result,
         });
         this.session = new MatlabSession();
@@ -220,7 +216,6 @@ export class AppComponent {
     this.msgs = [];
     this.msgs.push({
       severity: 'success',
-      summary: '',
       detail: 'Restarting Workspace...' + session.sid,
     });
 
@@ -230,7 +225,6 @@ export class AppComponent {
         this.msgs = [];
         this.msgs.push({
           severity: 'success',
-          summary: '',
           detail: result.result,
         });
 
@@ -239,7 +233,7 @@ export class AppComponent {
       },
       (error) => {
         console.log(error);
-        this.msgs.push({ severity: 'error', summary: '', detail: error.error });
+        this.msgs.push({ severity: 'error', detail: error.error });
       }
     );
   }
@@ -266,7 +260,7 @@ export class AppComponent {
       }
     );
   }
-
+  // hay que borrar solo los span p-terminal-command
   clearConsole(): void{
     if(document.getElementsByClassName('p-terminal-content')[0]){
     document.getElementsByClassName('p-terminal-content')[0].innerHTML = "";
