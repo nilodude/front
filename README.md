@@ -11,3 +11,10 @@
 Download zip and run `npm install` in the root directory.
 Once installed run `npm start` or `ng serve`.
 Once deployed successfully visit localhost:4200.
+
+
+> Trabajo Fin de Grado. Grado en Ingeniería de las Tecnologías de Telecomunicación.
+>
+> Universidad de Sevilla. 2021.
+>
+> Alfonso Lerma Trevilla.
