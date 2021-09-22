@@ -18,7 +18,6 @@ export class AppComponent {
   sessions: MatlabSession[];
   matlabResponse: MatlabResponse;
   menuItems: MenuItem[];
-  element: HTMLElement;
   msgs: Message[];
   menuItemSessions: MenuItem[];
   displayTerminal: boolean;
@@ -58,7 +57,6 @@ export class AppComponent {
   ngOnInit() {
     this.displayTerminal = false;
     this.msgs = [];
-    this.element = document.getElementById('termi') as HTMLElement;
     this.getSessions();
     this.figures = [];
     this.prompt = ">>";
@@ -247,8 +245,8 @@ export class AppComponent {
   }
 
   closeFigure(id: number): void {
-    this.figures = this.figures.filter((figure) => figure.id !== id);
-    this.matlabResponse.figures = this.matlabResponse.figures.filter((figure) => figure.id !== id);
+    this.matlabResponse.figures = 
+      this.matlabResponse.figures.filter((figure) => figure.id !== id);
     this.prompt = "<<";
     this.matlabService.runCommand(this.session.sid, 'close '+id).subscribe(
       (result) => {

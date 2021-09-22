@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import {
   HttpClient,
-  HttpHeaders,
-  HttpUrlEncodingCodec,
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { MatlabResponse } from './models';
